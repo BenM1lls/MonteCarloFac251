@@ -1,0 +1,120 @@
+import random
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Earth gravity constant
+G = 9.81
+
+# Define the box limits
+box_left = -3
+box_right = 3
+box_bottom = -5
+box_top = 5
+
+# Calculate the box dimensions
+box_width = box_right - box_left
+box_height = box_top - box_bottom
+
+# Define the desired number of people
+number_people = 600
+number_points = number_people*2
+
+# Generate points from a 2D normal distribution (unchanged)
+# ... (refer to your previous code for this part)
+
+# Personal space limit - TO DO (same as before)
+
+# ...
+
+# Assume a normal distribution for human weight (unchanged)
+# ...
+
+# Function to calculate bending moment at a point relative to a support
+def calculate_moment(force, distance):
+  """
+  This function calculates the bending moment (M) at a point due to a force.
+
+  Args:
+      force (float): Force applied at the point (N).
+      distance (float): Distance from the point to the support (m).
+
+  Returns:
+      float: Bending moment (N*m).
+  """
+  return force * distance
+
+# Function to calculate bending moment for each section
+def calculate_bending_moment(forces_at_points, section_dimensions, support_location):
+  """
+  This function calculates the bending moment for each section of the floor.
+
+  Args:
+      forces_at_points (list): List of forces (N) acting on each point.
+      section_dimensions (tuple): Tuple containing section width and length (m).
+      support_location (float): X or Y coordinate of the support point (m).
+
+  Returns:
+      list: List of bending moments (N*m) for each section.
+  """
+  section_moments = []
+  section_width, section_length = section_dimensions
+
+  for i in range(0, len(forces_at_points), 2):  # Assuming forces come in pairs (x,y)
+    force_x, force_y = forces_at_points[i], forces_at_points[i+1]
+    # Adjust distance calculation based on support location (X or Y)
+    if support_location == 'X':
+      distance = abs(points[i, 0] - support_location)  # Distance from center of gravity
+    else:
+      distance = abs(points[i, 1] - support_location)
+    moment = calculate_moment(force_y, distance)  # Assuming force_y is vertical
+    section_moments.append(moment)
+
+  return section_moments
+
+# Example floor properties (replace with actual values)
+floor_width = box_width  # Assuming the floor fills the box
+floor_length = 10  # Example length
+youngs_modulus = 30e9  # Example Young's modulus for concrete (Pa)
+moment_of_inertia = calculate_moment_of_inertia(floor_width, floor_length)  # Placeholder, replace with actual calculation
+
+# Placeholder function to calculate moment of inertia (replace with appropriate calculation for your floor section)
+def calculate_moment_of_inertia(width, length):
+  # Implement the actual moment of inertia calculation for your floor section geometry
+  return 1  # Placeholder value
+
+# Assuming simply supported beam with supports at each end (replace as needed)
+support_location_x = box_left
+support_location_y = box_bottom
+
+# Divide the floor into sections (replace with actual sectioning logic)
+section_width = floor_width / 5  # Example: Divide floor into 5 sections
+section_length = floor_length
+
+section_dimensions = (section_width, section_length)
+
+# Calculate bending moments
+bending_moments = calculate_bending_moment(forces_at_points, section_dimensions, support_location_x)
+
+# Breaking moment (replace with actual calculation based on material properties)
+breaking_moment = youngs_modulus * moment_of_inertia / (6 * floor_width)  # Assuming rectangular section, replace with appropriate formula
+
+# Analyze results
+for i, moment in enumerate(bending_moments):
+  if moment > breaking_moment:
+    section_center_x = points[2*i, 0]  # Assuming x-coordinate of force pair represents center
+    print(f"Section {i+1} overloaded (center X: {section_center_x:.2f}m)")
+  else:
+    print(f"Section {i+1} within limits")
+
+# Further considerations
+print("\n**Important Considerations**")
+print("- This is a simplified analysis. Real-world floor behavior is more complex.")
+print("- The provided breaking moment is an example. Use appropriate calculations for your specific floor material and section.")
+print("- This code assumes a simply supported beam. Consider the actual support conditions.")
+print("- Dynamic loading (people moving) is not considered. This can significantly impact results.")
+
+# Next steps
+print("\n**Next Steps**")
+print("- Implement a more detailed floor sectioning scheme.")
+print("- Calculate the moment of inertia for your specific floor section geometry.")
+print("- Consider using a structural analysis software for a more accurate evaluation.")
